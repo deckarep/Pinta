@@ -119,7 +119,8 @@ namespace Pinta
 			
 			if (response == (int)Gtk.ResponseType.Ok) {
 				dialog.SaveChanges ();
-				PintaCore.Workspace.Invalidate ();
+			}else{
+				dialog.RevertChanges();	
 			}
 				
 			dialog.Destroy ();

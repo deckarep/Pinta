@@ -31,6 +31,8 @@ namespace Pinta
 {
 	public partial class LayerPropertiesDialog : Gtk.Dialog
 	{
+		private double original_opacity;
+		
 		public LayerPropertiesDialog ()
 		{
 			this.Build ();
@@ -44,6 +46,19 @@ namespace Pinta
 
 			spinbutton1.ValueChanged += new EventHandler (spinbutton1_ValueChanged);
 			hscale1.ValueChanged += new EventHandler (hscale1_ValueChanged);
+			
+			original_opacity = hscale1.Value;
+		}
+		
+		public void RevertChanges ()
+		{
+			UpdateLayerOpacity (original_opacity);
+		}
+		
+		private void UpdateLayerOpacity (double value)
+		{
+			PintaCore.Layers.CurrentLayer.Opacity = value / 100d;
+			PintaCore.Workspace.Invalidate();
 		}
 
 		#region Public Methods
@@ -51,7 +66,7 @@ namespace Pinta
 		{
 			PintaCore.Layers.CurrentLayer.Name = entry1.Text;
 			PintaCore.Layers.CurrentLayer.Hidden = !checkbutton1.Active;
-			PintaCore.Layers.CurrentLayer.Opacity = hscale1.Value / 100d;
+			UpdateLayerOpacity (hscale1.Value);
 		}
 		#endregion
 
@@ -59,11 +74,13 @@ namespace Pinta
 		private void hscale1_ValueChanged (object sender, EventArgs e)
 		{
 			spinbutton1.Value = hscale1.Value;
+			UpdateLayerOpacity (hscale1.Value);
 		}
 
 		private void spinbutton1_ValueChanged (object sender, EventArgs e)
 		{
 			hscale1.Value = spinbutton1.Value;
+			UpdateLayerOpacity (hscale1.Value);
 		}
 		#endregion
 	}
