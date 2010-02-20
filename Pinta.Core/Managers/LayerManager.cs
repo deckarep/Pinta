@@ -85,7 +85,15 @@ namespace Pinta.Core
 		}
 
 		public Layer ToolLayer {
-			get { return tool_layer; }
+			get {
+				if (tool_layer.Surface.Width != PintaCore.Workspace.ImageSize.X || tool_layer.Surface.Height != PintaCore.Workspace.ImageSize.Y) {
+					(tool_layer.Surface as IDisposable).Dispose ();
+					tool_layer = CreateLayer ("Tool Layer");
+					tool_layer.Hidden = true;
+				}
+				
+				return tool_layer;
+			}
 		}
 
 		public Layer TransparentLayer {
@@ -388,7 +396,7 @@ namespace Pinta.Core
 				layer.Rotate90CW ();
 			
 			PintaCore.Workspace.ImageSize = new Point (PintaCore.Workspace.ImageSize.Y, PintaCore.Workspace.ImageSize.X);
-			PintaCore.Workspace.CanvasSize = new PointD (PintaCore.Workspace.CanvasSize.Y, PintaCore.Workspace.CanvasSize.X);
+			PintaCore.Workspace.CanvasSize = new Point (PintaCore.Workspace.CanvasSize.Y, PintaCore.Workspace.CanvasSize.X);
 
 			PintaCore.Workspace.Invalidate ();
 		}
@@ -399,7 +407,7 @@ namespace Pinta.Core
 				layer.Rotate90CCW ();
 			
 			PintaCore.Workspace.ImageSize = new Point (PintaCore.Workspace.ImageSize.Y, PintaCore.Workspace.ImageSize.X);
-			PintaCore.Workspace.CanvasSize = new PointD (PintaCore.Workspace.CanvasSize.Y, PintaCore.Workspace.CanvasSize.X);
+			PintaCore.Workspace.CanvasSize = new Point (PintaCore.Workspace.CanvasSize.Y, PintaCore.Workspace.CanvasSize.X);
 			
 			PintaCore.Workspace.Invalidate ();
 

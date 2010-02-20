@@ -52,6 +52,7 @@ namespace Pinta.Core
 		public virtual string StatusBarText { get { return string.Empty; } }
 		public virtual ToggleToolButton ToolItem { get { if (tool_item == null) tool_item = CreateToolButton (); return tool_item; } }
 		public virtual bool Enabled { get { return false; } }
+		public virtual Gdk.Cursor DefaultCursor { get { return null; } }
 		
 		#region Public Methods
 		public void DoMouseMove (object o, MotionNotifyEventArgs args, Cairo.PointD point)
@@ -79,6 +80,11 @@ namespace Pinta.Core
 			OnMouseUp (canvas, args, point);
 		}
 
+		public void DoActivated ()
+		{
+			OnActivated ();
+		}
+		
 		public void DoDeactivated ()
 		{
 			OnDeactivated ();
@@ -122,8 +128,14 @@ namespace Pinta.Core
 		{
 		}
 
+		protected virtual void OnActivated ()
+		{
+			SetCursor (DefaultCursor);
+		}
+		
 		protected virtual void OnDeactivated ()
 		{
+			SetCursor (null);
 		}
 
 		protected virtual ToggleToolButton CreateToolButton ()
@@ -138,6 +150,11 @@ namespace Pinta.Core
 			tool_item.TooltipText = Name;
 			
 			return tool_item;
+		}
+		
+		protected void SetCursor (Gdk.Cursor cursor)
+		{
+			PintaCore.Chrome.DrawingArea.GdkWindow.Cursor = cursor;
 		}
 		#endregion
 	}
