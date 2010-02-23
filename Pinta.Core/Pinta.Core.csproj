@@ -105,6 +105,8 @@
     <Compile Include="Tools\BaseTool.cs" />
     <Compile Include="Tools\BaseBrushTool.cs" />
     <Compile Include="Tools\ColorPickerTool.cs" />
+    <Compile Include="Tools\RecolorTool.cs" />
+    <Compile Include="Tools\LineCurveTool.cs" />
     <Compile Include="Tools\FloodTool.cs" />
     <Compile Include="Tools\LassoSelectTool.cs" />
     <Compile Include="Tools\PaintBucketTool.cs" />
@@ -125,6 +127,13 @@
     <Compile Include="Tools\UnimplementedTools.cs" />
     <Compile Include="Tools\ZoomTool.cs" />
     <Compile Include="EventArgs\HistoryItemRemovedEventArgs.cs" />
+    <Compile Include="HistoryItems\UpdateLayerPropertiesHistoryItem.cs" />
+    <Compile Include="Classes\ObservableObject.cs" />
+    <Compile Include="Classes\PropertyChangedEventArgs.cs" />
+    <Compile Include="Classes\PropertyChangedEventHandler.cs" />
+    <Compile Include="Classes\LayerProperties.cs" />
+    <Compile Include="Effects\ColorTransferMode.cs" />
+    <Compile Include="Effects\SplineInterpolator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

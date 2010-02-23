@@ -1,10 +1,10 @@
 // 
-// RoundedRectangleTool.cs
+// ObservableObject.cs
 //  
 // Author:
-//       Jonathan Pobst <monkey@jpobst.com>
+//       Greg Lowe <greg@vis.net.nz>
 // 
-// Copyright (c) 2010 Jonathan Pobst
+// Copyright (c) 2010 Greg Lowe
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,42 +25,24 @@
 // THE SOFTWARE.
 
 using System;
-using Cairo;
 
 namespace Pinta.Core
 {
-	public class RoundedRectangleTool : ShapeTool
+
+	public class ObservableObject
 	{
-		public override string Name {
-			get { return "Rounded Rectangle"; }
-		}
-		public override string Icon {
-			get { return "Tools.RoundedRectangle.png"; }
-		}
-		public override string StatusBarText {
-			get { return "Click and drag to draw a rounded rectangle (right click for secondary color). Hold shift to constrain."; }
-		}
-
-		protected override Rectangle DrawShape (Rectangle rect, Layer l)
+		public ObservableObject ()
 		{
-			Rectangle dirty;
-			
-			using (Context g = new Context (l.Surface)) {
-				g.AppendPath (PintaCore.Layers.SelectionPath);
-				g.FillRule = FillRule.EvenOdd;
-				g.Clip ();
-
-				g.Antialias = Antialias.Subpixel;
-
-				if (FillShape && StrokeShape)
-					dirty = g.FillStrokedRoundedRectangle (rect, BrushWidth, fill_color, outline_color, BrushWidth);
-				else if (FillShape)
-					dirty = g.FillRoundedRectangle (rect, BrushWidth, outline_color);
-				else
-					dirty = g.DrawRoundedRectangle (rect, BrushWidth, outline_color, BrushWidth);
-			}
-			
-			return dirty;
 		}
+				
+		public event PropertyChangedEventHandler PropertyChanged;
+				
+		protected void SetValue<T> (string propertyName, ref T member, T value)
+		{
+			member = value;
+			
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}		
 	}
 }

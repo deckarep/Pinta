@@ -1,10 +1,10 @@
 // 
-// PanTool.cs
+// UpdateLayerPropertiesHistoryItem.cs
 //  
 // Author:
-//       Olivier Dufour
+//       Greg Lowe <greg@vis.net.nz>
 // 
-// Copyright (c) 2010 Olivier Dufour
+// Copyright (c) 2010 Greg Lowe
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,45 +25,46 @@
 // THE SOFTWARE.
 
 using System;
-using Cairo;
 
 namespace Pinta.Core
 {
-	public class PanTool : BaseTool
+	public class UpdateLayerPropertiesHistoryItem : BaseHistoryItem
 	{
-		public override string Name {
-			get { return "Pan"; }
-		}
-		public override string Icon {
-			get { return "Tools.Pan.png"; }
-		}
-		public override string StatusBarText {
-			get { return "When zoomed in close, click and drag to navigate image."; }
-		}
-		
-		private bool active;
-		private PointD last_point;
-		
-		protected override void OnMouseDown (Gtk.DrawingArea canvas, Gtk.ButtonPressEventArgs args, PointD point)
+		int layer_index;
+		LayerProperties initial_properties;
+		LayerProperties updated_properties;
+
+		public UpdateLayerPropertiesHistoryItem (
+				 string icon,
+				 string text,
+				 int layerIndex,
+				 LayerProperties initialProperties,
+				 LayerProperties updatedProperties)
+			: base (icon, text)
 		{
-			// Don't scroll if the whole canvas fits (no scrollbars)
-			if (!PintaCore.Workspace.CanvasFitsInWindow)
-				active = true;
-				
-			last_point = new PointD (args.Event.XRoot, args.Event.YRoot);
-		}
-		
-		protected override void OnMouseUp (Gtk.DrawingArea canvas, Gtk.ButtonReleaseEventArgs args, PointD point)
-		{
-			active = false;
+			layer_index = layerIndex;
+			initial_properties = initialProperties;
+			updated_properties = updatedProperties;
 		}
 
-		protected override void OnMouseMove (object o, Gtk.MotionNotifyEventArgs args, PointD point)
+		public override void Undo ()
+		{			
+			var layer = PintaCore.Layers[layer_index];
+			layer.Opacity = initial_properties.Opacity;
+			layer.Hidden = initial_properties.Hidden;
+			layer.Name = initial_properties.Name;
+		}
+
+		public override void Redo ()
 		{
-			if (active) {
-				PintaCore.Workspace.ScrollCanvas ((int)(last_point.X - args.Event.XRoot), (int)(last_point.Y - args.Event.YRoot));
-				last_point = new PointD (args.Event.XRoot, args.Event.YRoot);
-			}
+			var layer = PintaCore.Layers[layer_index];
+			layer.Opacity = updated_properties.Opacity;
+			layer.Hidden = updated_properties.Hidden;
+			layer.Name = updated_properties.Name;
+		}
+
+		public override void Dispose ()
+		{
 		}
 	}
 }
