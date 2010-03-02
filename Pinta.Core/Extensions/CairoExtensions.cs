@@ -555,6 +555,11 @@ namespace Pinta.Core
 
 			using (Context g = new Context (PintaCore.Layers.CurrentLayer.Surface)) {
 				g.AppendPath (PintaCore.Layers.SelectionPath);
+				
+				// We don't want the bounding box to include a stroke width 
+				// of 1, but setting it to 0 returns an empty rectangle.  Set
+				// it to a sufficiently small width and rounding takes care of it
+				g.LineWidth = .001;
 				rect = g.StrokeExtents ();
 			}
 
@@ -595,6 +600,15 @@ namespace Pinta.Core
 			return dstPtr;
 		}
 
+		public static unsafe ColorBgra* GetPointAddressUnchecked (this ImageSurface surf, ColorBgra* srcDataPtr, int srcWidth, int x, int y)
+		{
+			ColorBgra* dstPtr = srcDataPtr;
+
+			dstPtr += (x) + (y * srcWidth);
+
+			return dstPtr;
+		}
+
 		public static unsafe ColorBgra GetPointUnchecked (this ImageSurface surf, int x, int y)
 		{
 			ColorBgra* dstPtr = (ColorBgra*)surf.DataPtr;
@@ -604,11 +618,33 @@ namespace Pinta.Core
 			return *dstPtr;
 		}
 
+		// This isn't really an extension method, since it doesn't use
+		// the passed in argument, but it's nice to have the same calling
+		// convention as the uncached version.  If you can use this one
+		// over the other, it is much faster in tight loops (like effects).
+		public static unsafe ColorBgra GetPointUnchecked (this ImageSurface surf, ColorBgra* srcDataPtr, int srcWidth, int x, int y)
+		{
+			ColorBgra* dstPtr = srcDataPtr;
+
+			dstPtr += (x) + (y * srcWidth);
+
+			return *dstPtr;
+		}
+
 		public static unsafe ColorBgra* GetRowAddressUnchecked (this ImageSurface surf, int y)
 		{
 			ColorBgra* dstPtr = (ColorBgra*)surf.DataPtr;
 
 			dstPtr += y * surf.Width;
+
+			return dstPtr;
+		}
+
+		public static unsafe ColorBgra* GetRowAddressUnchecked (this ImageSurface surf, ColorBgra* srcDataPtr, int srcWidth, int y)
+		{
+			ColorBgra* dstPtr = srcDataPtr;
+
+			dstPtr += y * srcWidth;
 
 			return dstPtr;
 		}

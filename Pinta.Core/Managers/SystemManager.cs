@@ -1,5 +1,5 @@
-// 
-// PaletteManager.cs
+﻿// 
+// SystemManager.cs
 //  
 // Author:
 //       Jonathan Pobst <monkey@jpobst.com>
@@ -25,58 +25,19 @@
 // THE SOFTWARE.
 
 using System;
-using Cairo;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Pinta.Core
 {
-	public class PaletteManager
+	public class SystemManager
 	{
-		private Color primary;
-		private Color secondary;
-
-		public Color PrimaryColor {
-			get { return primary; }
-			set {
-				if (!primary.Equals (value)) {
-					primary = value;
-					OnPrimaryColorChanged ();
-				}
-			}
-		}
-
-		public Color SecondaryColor {
-			get { return secondary; }
-			set {
-				if (!secondary.Equals (value)) {
-					secondary = value;
-					OnSecondaryColorChanged ();
-				}
-			}
-		}
+		public int RenderThreads { get; set; }
 		
-		public PaletteManager ()
+		public SystemManager ()
 		{
-			PrimaryColor = new Color (0, 0, 0);
-			SecondaryColor = new Color (1, 1, 1);
+			RenderThreads = Environment.ProcessorCount;
 		}
-
-		#region Protected Methods
-		protected void OnPrimaryColorChanged ()
-		{
-			if (PrimaryColorChanged != null)
-				PrimaryColorChanged.Invoke (this, EventArgs.Empty);
-		}
-
-		protected void OnSecondaryColorChanged ()
-		{
-			if (SecondaryColorChanged != null)
-				SecondaryColorChanged.Invoke (this, EventArgs.Empty);
-		}
-		#endregion
-		
-		#region Events
-		public event EventHandler PrimaryColorChanged;
-		public event EventHandler SecondaryColorChanged;
-		#endregion
 	}
 }
